@@ -10,3 +10,13 @@ RUN pip3 install ansible-tower-cli kubernetes openshift
 
 COPY roles/job_runner ${HOME}/roles/job_runner
 CMD ["ansible-runner", "-r", "job_runner", "run", "/runner"]
+
+# Rollback to root to allow the pip3 install to succeed
+# USER 0
+
+RUN python3 -m ensurepip && pip3 install pysnow certifi kubernetes openshift jq dnspython
+
+RUN curl -o /usr/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+    chmod +x /usr/bin/jq
+
+# USER 1000
